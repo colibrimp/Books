@@ -1,0 +1,21 @@
+ {%  extends 'base.html' %}
+
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-body">
+            <h3>{{ book.title }}</h3>
+            <h3>{{ book.author }}</h3>
+            <img src="static/images_update/{{book.image}}" alt="image">
+            <p>{{ book.description }}</p>
+            <p>{{ book.rating }}</p>
+            <p>{{ book.genre_id }}</p>
+
+
+        </div>
+
+
+    </div>
+
+{% endblock %}

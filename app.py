@@ -1,13 +1,10 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request,flash
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Integer, String, Float
-# from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from datetime import datetime
 
-import os
 
 
 from _datetime import datetime
@@ -36,7 +33,7 @@ class Genre(db.Model):
     slug = db.Column(db.String(100), nullable=False)
 
     def __repr__(self):
-        return '<Genre %r>' % self.id
+        return '<Genre %r>' % self.name
 
 
 # CREATE TABLE
@@ -48,15 +45,15 @@ class Books(db.Model):
     author = db.Column(db.String(100), nullable=False)
     image = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text(), nullable=False)
-    rating = db.Column(db.Float, nullable=False)
-    created_on = db.Column(db.DateTime, default=datetime.now())
+    rating = db.Column(db.Float, nullable=True)
+    created_on = db.Column(db.DateTime(), default=datetime.now())
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id", ondelete="CASCADE"),primary_key=True)
-    genre = db.relationship("Genre",  backref="books")
+    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"), nullable=False)
+    genre = db.relationship("Genre",  backref=db.backref("books", lazy=True))
 
     def __repr__(self):
-        return '<Books %r>' % self.id
+        return '<Books %r>' % self.title
 
 # Create table schema in the database. Requires application context.
 with app.app_context():
@@ -69,7 +66,8 @@ def home():
     with app.app_context():
         genres = Genre.query.all()
         books = Books.query.all()
-    return render_template("index.html",  books=books, genres=genres)
+        current_time = datetime.now().year
+    return render_template("index.html",  books=books, genres=genres, year=current_time)
 
 
 
@@ -77,21 +75,26 @@ def home():
 def create():
     with app.app_context():
         genres = Genre.query.all()
-    return render_template("create.html", genres=genres)
+        books = Books.query.all()
+    return render_template("create.html", books=books, genres=genres)
 
 
+
+@app.route("/show/<int:id>", methods=["GET", "POST"])
+def show(id):
+    with app.app_context():
+        genre = Genre.query.all()
+        book = Books.query.get_or_404(id)
+    return render_template("show.html", book=book, genre=genre)
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if request.method == "POST":
 
         # save image
-
         file = request.files['image']
         file.filename = file.filename.replace(" ", "_")
         file.save(f'static/images_update/{file.filename}')
-
-
 
         # CREATE RECORs
         new_book = Books(
@@ -103,11 +106,68 @@ def add():
             rating=request.form.get("rating"),
             image=file.filename,
 
+
         )
         db.session.add(new_book)
         db.session.commit()
         return redirect(url_for('home'))
-    # return render_template("create.html")
+
+
+@app.route('/edit/<int:id>', methods=["GET", "POST"])
+def edit(id):
+    with app.app_context():
+        genres = Genre.query.all()
+        book = Books.query.get(id)
+    return render_template("edit.html", book=book, genres=genres)
+
+
+
+@app.route('/update/<int:id>', methods=["GET", "POST"])
+def update(id):
+
+
+    book = Books.query.get_or_404(id)
+    if request.method == "POST":
+
+        # save image
+        file = request.files['image']
+        file.filename = file.filename.replace(" ", "_")
+        file.save(f'static/images_update/{file.filename}')
+
+        # edit RECORs
+        book.title = request.form.get("title"),
+        book.author = request.form.get("author"),
+        book.genre_id = request.form.get("genre_id"),
+        book.description = request.form.get("description"),
+        book.rating = request.form.get("rating"),
+        book.image = file.filename
+
+
+        # try:
+        # db.session.add(book)
+        db.session.commit()
+        # flash("Funding Source Updated Successfully")
+        return redirect(url_for('home'))
+        # except:
+        #     return "There was a problem updating that book"
+
+    else:
+        return render_template("edit.html")
+
+
+
+@app.route('/delete/<int:id>', methods=["POST"])
+def delete(id):
+    books = Books.query.get_or_404(id)
+
+    try:
+        db.session.delete(books)
+        db.session.commit()
+        return redirect(url_for('home'))
+    except:
+        return "There was a problem deleting that book"
+
+
 
 
 

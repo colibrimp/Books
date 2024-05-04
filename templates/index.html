@@ -35,13 +35,12 @@
               <td>{{ book.genre_id }}</td>
 <!--              Active-->
               <td class="but_text d-flex">
-                  <a href="" class="btn btn-primary">
+                  <a href="{{ url_for('show', id = book.id) }}" class="btn btn-primary">
                       <i class="fa-solid fa-eye"></i></a>
-                  <a href="" class="btn btn-warning">
+                  <a href="{{ url_for('edit', id = book.id) }}" class="btn btn-warning">
                       <i class="fa-solid fa-pen-to-square"></i></a>
-                  <form method="post" action="">
-                      <!--                        @csrf-->
-                      <!--                        @method('DELETE')-->
+
+                  <form method="post" action="{{ url_for('delete', id = book.id) }}">
                       <button type="submit" class="btn btn-danger">
                           <i class="fa-solid fa-trash-can"></i>
                       </button>

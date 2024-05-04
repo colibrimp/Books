@@ -1,0 +1,26 @@
+INSERT INTO books (id, title, author, image, description, rating, genre_id)
+VALUES (1, 'Clean Python: Elegant Coding in Python', 'Sunil Kapil', 'myimage.jpg', 'Python is one of the most popular languages today. Relatively new
+fields such as data science, AI, robotics, and data analytics, along with
+traditional professions such as web development and scientific research,
+are embracing Python. It’s increasingly important for programmers writing
+code in a dynamic language like Python to make sure that the code is high-quality
+and error-free. As a Python developer, you want to make sure that
+the software you are building makes your users happy without going over
+budget or never releasing.', 9.5, 1);
+
+INSERT INTO books (id, title, author, image, description, rating, genre_id)
+VALUES (2, 'Learning Python', 'Mark Lutz', 'myimage.jpg', "Get a comprehensive, in-depth introduction to the core Python language with this hands-on book. Based on author Mark Lutz's popular training course, this updated fifth edition will help you quickly write efficient, high-quality code with Python.", 8.9, 1);
+
+INSERT INTO books (id, title, author, image, description, rating, genre_id)
+VALUES (3, 'The Ashes and the Star-Cursed King (Crowns of Nyaxia Book 2)', 'Carissa Broadbent', 'asher.jpg', "The Hunger Games meets vampires in the stunning second book in the Crowns of Nyaxia series by Carissa Broadbent", 5.6, 2);
+
+
+INSERT INTO books (id, title, author, image, description, rating, genre_id)
+VALUES (4, 'The Familiar', 'Leigh Bardugo', 'familiar.jpg', "FATE CAN BE CHANGED. CURSES CAN BE BROKEN. In a shabby house in the new capital of Madrid, Luzia Cotado uses scraps of magic to get through her days of endless toil.", 5.6, 2);
+
+
+INSERT INTO genre (id, name, slug)
+VALUES (1, 'Science', 'Scientific literature');
+
+INSERT INTO genre (id, name, slug)
+VALUES (2, 'Detective', 'Action literature');
